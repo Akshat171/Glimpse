@@ -15,6 +15,7 @@ import Categories from "../../components/categories";
 import { apiCall } from "../../api";
 import ImageGrid from "../../components/ImageGrid";
 import { debounce } from "lodash";
+import FilterModel from "../../components/filterModel";
 
 var page = 1;
 
@@ -25,6 +26,7 @@ const HomeScreen = () => {
   const { top } = useSafeAreaInsets();
   const searchInputRef = useRef(null);
   const paddingTop = top > 0 ? top + 10 : 30;
+  const modalRef = useRef(null);
 
   useEffect(() => {
     fetchImages();
@@ -87,13 +89,21 @@ const HomeScreen = () => {
     searchInputRef?.current?.clear();
   };
 
+  const openFiltersModal = () => {
+    modalRef?.current?.present();
+  };
+
+  const closeFiltersModal = () => {
+    modalRef?.current?.close();
+  };
+
   return (
     <View style={[styles.container, { paddingTop }]}>
       <View style={styles.header}>
         <Pressable>
           <Text style={styles.title}>Picstash</Text>
         </Pressable>
-        <Pressable>
+        <Pressable onPress={openFiltersModal}>
           <FontAwesome
             name="bars"
             size={22}
@@ -139,6 +149,7 @@ const HomeScreen = () => {
 
         <View>{images.length > 0 && <ImageGrid images={images} />}</View>
       </ScrollView>
+      <FilterModel modalRef={modalRef} />
     </View>
   );
 };
