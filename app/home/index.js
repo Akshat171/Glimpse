@@ -20,6 +20,7 @@ import FilterModel from "../../components/filterModel";
 var page = 1;
 
 const HomeScreen = () => {
+  const [filters, setFilters] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [images, setImages] = useState([]);
   const [search, setSearch] = useState("");
@@ -97,6 +98,19 @@ const HomeScreen = () => {
     modalRef?.current?.close();
   };
 
+  const applyFilters = () => {
+    console.log("applyFilters");
+    closeFiltersModal();
+  };
+
+  const resetFilters = () => {
+    console.log("resetFilters");
+    setFilters(null);
+    closeFiltersModal();
+  };
+
+  console.log("Filters", filters);
+
   return (
     <View style={[styles.container, { paddingTop }]}>
       <View style={styles.header}>
@@ -149,7 +163,14 @@ const HomeScreen = () => {
 
         <View>{images.length > 0 && <ImageGrid images={images} />}</View>
       </ScrollView>
-      <FilterModel modalRef={modalRef} />
+      <FilterModel
+        modalRef={modalRef}
+        filters={filters}
+        setFilters={setFilters}
+        onClose={closeFiltersModal}
+        onApply={applyFilters}
+        onReset={resetFilters}
+      />
     </View>
   );
 };
