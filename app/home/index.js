@@ -5,6 +5,7 @@ import {
   Pressable,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -53,6 +54,7 @@ const HomeScreen = () => {
     page = 1;
     let params = {
       page,
+      ...filters,
     };
     if (cat) {
       params.category = cat;
@@ -69,7 +71,7 @@ const HomeScreen = () => {
       setImages([]);
       //reseting category while searching images
       setActiveCategory(null);
-      fetchImages({ page, q: text }, false);
+      fetchImages({ page, q: text, ...filters }, false);
     }
 
     if (text == "") {
@@ -79,7 +81,7 @@ const HomeScreen = () => {
       setImages([]);
       //reseting category while searching images
       setActiveCategory(null);
-      fetchImages({ page }, false);
+      fetchImages({ page, ...filters }, false);
     }
   };
 
@@ -99,14 +101,48 @@ const HomeScreen = () => {
   };
 
   const applyFilters = () => {
-    console.log("applyFilters");
+    if (filters) {
+      page = 1;
+      setImages([]);
+      let params = {
+        page,
+        ...filters,
+      };
+      if (activeCategory) params.category = activeCategory;
+      if (search) params.q = search;
+      fetchImages(params, false);
+    }
     closeFiltersModal();
   };
 
   const resetFilters = () => {
-    console.log("resetFilters");
-    setFilters(null);
+    if (filters) {
+      page = 1;
+      setFilters(null);
+      setImages([]);
+      let params = {
+        page,
+      };
+      if (activeCategory) params.category = activeCategory;
+      if (search) params.q = search;
+      fetchImages(params, false);
+    }
     closeFiltersModal();
+  };
+
+  const clearThisFilter = (filterName) => {
+    let filterz = { ...filters };
+    delete filterz[filterName];
+    setFilters({ ...filterz });
+    page = 1;
+    setImages([]);
+    let params = {
+      page,
+      ...filterz,
+    };
+    if (activeCategory) params.category = activeCategory;
+    if (search) params.q = search;
+    fetchImages(params, false);
   };
 
   console.log("Filters", filters);
@@ -161,8 +197,55 @@ const HomeScreen = () => {
           />
         </View>
 
+        {filters && (
+          <View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filters}
+            >
+              {Object.keys(filters).map((key, index) => {
+                return (
+                  <View key={key} style={styles.filterItem}>
+                    {key == "colors" ? (
+                      <View
+                        style={{
+                          height: 30,
+                          width: 30,
+                          borderRadius: 7,
+                          backgroundColor: filters[key],
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.filterItemText}>{filters[key]}</Text>
+                    )}
+
+                    <Pressable
+                      style={styles.filterCloseIcon}
+                      onPress={() => clearThisFilter(key)}
+                    >
+                      <Ionicons
+                        name="close"
+                        size={14}
+                        color={theme.colors.neutral(0.9)}
+                      />
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
+
         <View>{images.length > 0 && <ImageGrid images={images} />}</View>
+
+        <View
+          style={{ marginTop: images.length > 0 ? 10 : 70, marginBottom: 70 }}
+        >
+          <ActivityIndicator color={theme.colors.neutral(1)} size={"large"} />
+        </View>
       </ScrollView>
+
       <FilterModel
         modalRef={modalRef}
         filters={filters}
@@ -212,6 +295,27 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.neutral(0.1),
     padding: 8,
     borderRadius: theme.radius.sm,
+  },
+  filters: {
+    paddingHorizontal: wp(4),
+    gap: 10,
+  },
+  filterItem: {
+    backgroundColor: theme.colors.grayBG,
+    padding: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: theme.radius.xs,
+    gap: 10,
+    paddingHorizontal: 10,
+  },
+  filterItemText: {
+    fontSize: hp(1.9),
+  },
+  filterCloseIcon: {
+    backgroundColor: theme.colors.neutral(0.2),
+    padding: 4,
+    borderRadius: 7,
   },
 });
 

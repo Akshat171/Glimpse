@@ -24,7 +24,7 @@ const categories = [
 const filters = {
   order: ["popular", "latest"],
   orientation: ["horizontal", "vertical"],
-  tyle: ["photo", "illustration", "vector"],
+  type: ["photo", "illustration", "vector"],
   colors: [
     "red",
     "orange",
