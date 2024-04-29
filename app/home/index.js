@@ -17,6 +17,7 @@ import { apiCall } from "../../api";
 import ImageGrid from "../../components/ImageGrid";
 import { debounce } from "lodash";
 import FilterModel from "../../components/filterModel";
+import { useRouter } from "expo-router";
 
 var page = 1;
 
@@ -29,12 +30,15 @@ const HomeScreen = () => {
   const searchInputRef = useRef(null);
   const paddingTop = top > 0 ? top + 10 : 30;
   const modalRef = useRef(null);
+  const scrollRef = useRef(null);
+  const [isEndReached, setIsEndReached] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetchImages();
   }, []);
 
-  const fetchImages = async (params = { page: 1 }, append = false) => {
+  const fetchImages = async (params = { page: 1 }, append = true) => {
     console.log("params", params, append);
     let res = await apiCall(params);
     if (res.success && res?.data?.hits) {
@@ -147,10 +151,47 @@ const HomeScreen = () => {
 
   console.log("Filters", filters);
 
+  const handleScroll = (event) => {
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
+    const scrollOffset = event.nativeEvent.contentOffset.y;
+    const bottomPosition = contentHeight - scrollViewHeight;
+
+    if (scrollOffset >= bottomPosition - 1) {
+      if (!isEndReached) {
+        setIsEndReached(true);
+        console.log("reached bootom");
+        ++page;
+        let params = {
+          page,
+          ...filters,
+        };
+        if (activeCategory) {
+          params.category = activeCategory;
+        }
+        if (search) {
+          params.q = search;
+        }
+
+        fetchImages(params);
+      }
+    } else if (isEndReached) {
+      //if user scroll away from bottom position
+
+      setIsEndReached(false);
+    }
+  };
+  const handleScrollUp = () => {
+    scrollRef?.current?.scrollTo({
+      y: 0,
+      animated: true,
+    });
+  };
+
   return (
     <View style={[styles.container, { paddingTop }]}>
       <View style={styles.header}>
-        <Pressable>
+        <Pressable onPress={handleScrollUp}>
           <Text style={styles.title}>Picstash</Text>
         </Pressable>
         <Pressable onPress={openFiltersModal}>
@@ -161,7 +202,12 @@ const HomeScreen = () => {
           />
         </Pressable>
       </View>
-      <ScrollView contentContainerStyle={{ gap: 15 }}>
+      <ScrollView
+        onScroll={handleScroll}
+        scrollEventThrottle={5}
+        ref={scrollRef}
+        contentContainerStyle={{ gap: 15 }}
+      >
         <View style={styles.searchBar}>
           <View style={styles.searchIcon}>
             <Feather
@@ -237,7 +283,9 @@ const HomeScreen = () => {
           </View>
         )}
 
-        <View>{images.length > 0 && <ImageGrid images={images} />}</View>
+        <View>
+          {images.length > 0 && <ImageGrid images={images} router={router} />}
+        </View>
 
         <View
           style={{ marginTop: images.length > 0 ? 10 : 70, marginBottom: 70 }}
