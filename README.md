@@ -120,7 +120,7 @@ Feel free to send feedback or [file an issue](https://github.com/Akshat171/Glimp
 
 ## Contributing
 
-### Contributions to the Job Finder App are welcome! If you'd like to contribute, please follow these steps:
+### Contributions to the this App are welcome! If you'd like to contribute, please follow these steps:
 
 * Fork the repository.
 * Create a new branch for your feature or bug fix.
