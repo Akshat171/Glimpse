@@ -76,7 +76,7 @@ Unveil a world of visual wonders with Glimpse, a captivating image exploration a
 
 ```
 # Clone the repository:
-git clone https://github.com/your-username/job-finder-app.git
+git clone https://github.com/Akshat171/Glimpse.git
 
 # Navigate to the project directory:
 cd glimpse
