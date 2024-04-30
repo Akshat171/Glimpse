@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "picStash",
-    "slug": "picStash",
+    "name": "glimpse",
+    "slug": "glimpse",
+    "description": "See beyond the obvious",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/glimpse.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/glimpse.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,20 +21,29 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/glimpse.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.akshat171.glimpse"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/glimpse.png"
     },
     "plugins": [
       "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3a495486-b706-4f45-86ed-02c35ac87354"
+      }
     }
   }
 }

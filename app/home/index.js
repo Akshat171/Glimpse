@@ -18,6 +18,7 @@ import ImageGrid from "../../components/ImageGrid";
 import { debounce } from "lodash";
 import FilterModel from "../../components/filterModel";
 import { useRouter } from "expo-router";
+import { Image } from "expo-image";
 
 var page = 1;
 
@@ -28,7 +29,7 @@ const HomeScreen = () => {
   const [search, setSearch] = useState("");
   const { top } = useSafeAreaInsets();
   const searchInputRef = useRef(null);
-  const paddingTop = top > 0 ? top + 10 : 30;
+  const paddingTop = top > 0 ? top + 20 : 30;
   const modalRef = useRef(null);
   const scrollRef = useRef(null);
   const [isEndReached, setIsEndReached] = useState(false);
@@ -192,7 +193,10 @@ const HomeScreen = () => {
     <View style={[styles.container, { paddingTop }]}>
       <View style={styles.header}>
         <Pressable onPress={handleScrollUp}>
-          <Text style={styles.title}>Picstash</Text>
+          <Image
+            source={require("../../assets/images/glimpse.png")}
+            style={styles.logo}
+          />
         </Pressable>
         <Pressable onPress={openFiltersModal}>
           <FontAwesome
@@ -318,6 +322,10 @@ const styles = StyleSheet.create({
     fontSize: hp(4),
     fontWeight: theme.fontWeights.semibold,
     color: theme.colors.neutral(0.9),
+  },
+  logo: {
+    width: 120,
+    height: 30,
   },
   searchBar: {
     marginHorizontal: wp(4),

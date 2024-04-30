@@ -18,7 +18,7 @@ const WelcomeScreen = () => {
     <View style={styles.container}>
       <StatusBar style="light" />
       <Image
-        source={require("../assets/images/square_1.jpg")}
+        source={require("../assets/images/bg1.png")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
@@ -39,13 +39,13 @@ const WelcomeScreen = () => {
             entering={FadeInDown.delay(400).springify()}
             style={styles.title}
           >
-            Picstash
+            Glimpse
           </Animated.Text>
           <Animated.Text
             entering={FadeInDown.delay(500).springify()}
             style={styles.brandline}
           >
-            Stash your pixels, snap by snap
+            See beyond the obvious
           </Animated.Text>
           <Animated.View entering={FadeInDown.delay(600).springify()}>
             <Pressable
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     width: wp(100),
-    height: wp(80),
+    height: wp(70),
     bottom: 0,
     position: "absolute",
   },
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    gap: 14,
+    gap: 8,
   },
   startText: {
     color: theme.colors.white,
