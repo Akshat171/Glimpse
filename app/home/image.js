@@ -18,6 +18,7 @@ import { Entypo, Octicons } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import Toast from "react-native-toast-message";
 
 const image = () => {
   const router = useRouter();
@@ -50,18 +51,32 @@ const image = () => {
   };
 
   const handleShareImage = async () => {
-    setStatus("sharing");
-    let uri = await downloadFile();
-    if (uri) {
-      //share image
-      await Sharing.shareAsync(uri);
+    if (Platform.OS === "web") {
+      showToast("Link copied");
+    } else {
+      setStatus("sharing");
+      let uri = await downloadFile();
+      if (uri) {
+        //share image
+        await Sharing.shareAsync(uri);
+      }
     }
   };
   const handleDownloadImage = async () => {
-    setStatus("downloading");
-    let uri = await downloadFile();
-    if (uri) {
-      console.log("image downloaded");
+    if (Platform.OS === "web") {
+      const anchorTag = document.createElement("a");
+      anchorTag.href = imageUrl;
+      anchorTag.target = "_blank";
+      anchorTag.download = fileName || "download";
+      document.body.appendChild(anchorTag);
+      anchorTag.click();
+      document.body.removeChild(anchorTag);
+    } else {
+      setStatus("downloading");
+      let uri = await downloadFile();
+      if (uri) {
+        showToast("Image downloaded");
+      }
     }
   };
 
@@ -77,6 +92,24 @@ const image = () => {
       Alert.alert("Image", error.message);
       return null;
     }
+  };
+
+  const showToast = (message) => {
+    Toast.show({
+      type: "success",
+      text1: message,
+      position: "bottom",
+    });
+  };
+
+  const toastConfig = {
+    success: ({ text1, props, ...rest }) => {
+      return (
+        <View style={styles.toast}>
+          <Text style={styles.toastText}>{text1}</Text>
+        </View>
+      );
+    },
   };
   return (
     <BlurView tint="dark" intensity={60} style={styles.container}>
@@ -122,6 +155,7 @@ const image = () => {
           )}
         </Animated.View>
       </View>
+      <Toast config={toastConfig} visibilityTime={2500} />
     </BlurView>
   );
 };
@@ -161,6 +195,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(225,225,225,0.2)",
     borderRadius: theme.radius.lg,
     borderCurve: "continuous",
+  },
+  toast: {
+    padding: 15,
+    paddingHorizontal: 30,
+    borderRadius: theme.radius.xl,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.15)",
+  },
+  toastText: {
+    fontSize: hp(1.8),
+    fontWeight: theme.fontWeights.semibold,
+    color: theme.colors.white,
   },
 });
 
